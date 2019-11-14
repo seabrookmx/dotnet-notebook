@@ -20,6 +20,9 @@ services:
 ```sh
 docker-compose up -d dotnet-notebook
 ```
+
+**Note:** the docker build will take some time! Jupyter has quite a bit of functionality (read dependencies) and the resulting docker image produced is over 3GB.
+
 ### Logging In
 Your "token" can be used to set a password for a fresh instance.
 The token is printed in the docker logs on startup.
