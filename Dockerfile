@@ -7,8 +7,13 @@ LABEL maintainer="Jupyter Project <jupyter@googlegroups.com>"
 
 USER root
 
-# Install all OS dependencies for fully functional notebook server
-RUN apt-get update && apt-get install -yq --no-install-recommends \
+# Install all OS dependencies for fully functional notebook server, including dotnet repos
+RUN apt-get update && apt-get install -yq software-properties-common wget && \
+    wget -q https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb && \
+    dpkg -i packages-microsoft-prod.deb && \
+    add-apt-repository universe && apt-get update && apt-get install -yq --no-install-recommends \
+    apt-transport-https \
+    dotnet-sdk-3.0 \
     build-essential \
     emacs \
     git \
@@ -34,3 +39,11 @@ RUN apt-get update && apt-get install -yq --no-install-recommends \
 
 # Switch back to jovyan to avoid accidental container runs as root
 USER $NB_UID
+
+ENV PATH="${PATH}:/home/jovyan/.dotnet/tools"
+
+# Set up dotnet jupyter kernel
+RUN dotnet tool install -g dotnet-try && \
+    dotnet try jupyter install && \
+    jupyter kernelspec list
+
